@@ -1,0 +1,10 @@
+Current/Prev	Undefined	Const	Parameter	Variable	Operator	Function	LeftParenthesis	RightParenthesis	Separator
+Undefined	0	1	1	1	0	0	0	1	0
+Const	1	0	0	0	1	0	1	0	1
+Parameter	1	0	0	0	1	0	1	0	1
+Variable	1	0	0	0	1	0	1	0	1
+Operator	1	1	1	1	1	0	1	1	1
+Function	1	0	0	0	1	0	1	0	1
+LeftParenthesis	1	0	0	0	1	1	1	0	1
+RightParenthesis	0	1	1	1	0	0	1	1	0
+Separator	0	1	1	1	0	0	0	1	0
