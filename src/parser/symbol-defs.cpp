@@ -1,5 +1,6 @@
 #include "parser/symbol-defs.hpp"
 #include "utils/debug.hpp"
+#include <algorithm>
 #include <fstream>
 
 SymbolDefs::SymbolDefs( const std::string& file )
@@ -7,9 +8,10 @@ SymbolDefs::SymbolDefs( const std::string& file )
     Load( file );
 }
 
-SymbolDef* SymbolDefs::Find( const std::string& name, int args )
+const SymbolDef* SymbolDefs::Find( const std::string& name )
 {
-    return nullptr;
+    auto it = std::find_if( m_defs.cbegin(), m_defs.cend(), [ &name ]( const auto& el ) { return el.name == name; } );
+    return &*it;
 }
 
 void SymbolDefs::Load( const std::string& file )

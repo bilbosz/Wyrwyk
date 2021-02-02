@@ -2,6 +2,7 @@
 #include "parser/tokenizer.hpp"
 #include "parser/translator.hpp"
 #include "parser/validator.hpp"
+#include "utils/debug.hpp"
 
 Parser::Parser()
     : m_symbolDefs( std::make_unique< SymbolDefs >( "res/parser/symbol-defs.tsv" ) )
@@ -36,4 +37,21 @@ bool Parser::Parse( const char* expression, float* output )
 
 Parser::~Parser()
 {
+}
+
+bool Parser::IsSymbolUsed( float* expression, const std::string& name ) const
+{
+    auto symbol = m_symbolDefs->Find( name );
+    auto it = expression;
+    while( static_cast< bool >( *it ) )
+    {
+        auto type = *( it );
+        auto value = *( it + 1 );
+        if( static_cast< float >( symbol->type ) == type && static_cast< float >( symbol->id ) == value )
+        {
+            return true;
+        }
+        it += 2;
+    }
+    return false;
 }

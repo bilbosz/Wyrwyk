@@ -12,7 +12,7 @@ class SymbolDefs
 {
 public:
     explicit SymbolDefs( const std::string& file );
-    SymbolDef* Find( const std::string& name, int args = 0 );
+    const SymbolDef* Find( const std::string& name );
 
     bool UpdateTokenDefByName( Token& token ) const;
     bool UpdateTokenDefByType( Token& token ) const;

@@ -28,7 +28,7 @@ private:
     static std::chrono::high_resolution_clock::duration s_pauseDuration;
 };
 
-#endif // sDEBUG
+#endif // DEBUG
 
 // clang-format off
 #ifdef DEBUG

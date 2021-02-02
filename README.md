@@ -12,6 +12,11 @@ sin(x)*x*x -10*sin(x)*y + cos(y)*y*y <= 0
 sin(x)*x*x -10*sin(x)*y + cos(y)*y*y <= 2000*sin(t)
 Ying Yang:
 ((x*x+(y+0.5)*(y+0.5)<=0.5*0.5&&!(x*x+(y+0.5)*(y+0.5)<=pow(0.5/3,2))||(x>0&&!(x*x+(y-0.5)*(y-0.5)<=0.5*0.5)&&!(x*x+(y+0.5)*(y+0.5)<=pow(0.5/3,2)))||x*x+(y-0.5)*(y-0.5)<=pow(0.5/3,2)||x*x+y*y==1))&&x*x+y*y<=1
+(((cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+((sin(a)*x+cos(a)*y)+0.5)*((sin(a)*x+cos(a)*y)+0.5)<=0.5*0.5&&!((cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+((sin(a)*x+cos(a)*y)+0.5)*((sin(a)*x+cos(a)*y)+0.5)<=pow(0.5/3,2))||((cos(a)*x-sin(a)*y)>0&&!((cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+((sin(a)*x+cos(a)*y)-0.5)*((sin(a)*x+cos(a)*y)-0.5)<=0.5*0.5)&&!((cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+((sin(a)*x+cos(a)*y)+0.5)*((sin(a)*x+cos(a)*y)+0.5)<=pow(0.5/3,2)))||(cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+((sin(a)*x+cos(a)*y)-0.5)*((sin(a)*x+cos(a)*y)-0.5)<=pow(0.5/3,2)||(cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+(sin(a)*x+cos(a)*y)*(sin(a)*x+cos(a)*y)==1))&&(cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+(sin(a)*x+cos(a)*y)*(sin(a)*x+cos(a)*y)<=1
+cos(x*x+y*y) == sin(x*x+y*y)
+cos(x*x*x -10*x*y + y*y*y) == sin(x*x+y*y*a+b)
+Heart:
+
 ```
 
 ## Requirements

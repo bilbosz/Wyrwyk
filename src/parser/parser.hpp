@@ -20,6 +20,7 @@ public:
     Parser();
     ~Parser();
     bool Parse( const char* expression, float* output );
+    bool IsSymbolUsed( float* expression, const std::string& name ) const;
 
 private:
     std::unique_ptr< SymbolDefs > m_symbolDefs;
