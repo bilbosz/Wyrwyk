@@ -10,7 +10,7 @@ uniform vec4 u_BoundingBox;
 const int u_ParamsCount = 5;
 uniform float u_Params[u_ParamsCount] = { 1, 2, 3, 4, 5 };
 
-const int Size = 256;
+const int Size = 1000;
 uniform vec2[Size] u_Symbols;
 
 uniform vec3 u_FalseColor;
@@ -69,6 +69,11 @@ vec4 orOperator(vec4 a, vec4 b)
 vec4 xorOperator(vec4 a, vec4 b)
 {
     return vec4(bvec4(notZero(a)).x ^^ bvec4(notZero(b)).x);
+}
+
+vec4 notOperator( vec4 a )
+{
+    return vec4(!bvec4(notZero(a)).x);
 }
 
 float eval(vec4 v)
@@ -175,7 +180,7 @@ float eval(vec4 v)
                 case 62: args[n - 3]=faceforward(args[n - 3], args[n - 2], args[n - 1]); n -= 2; break;
                 case 63: args[n - 2]=reflect(args[n - 2], args[n - 1]); --n; break;
                 //                case 64: args[n - 1]=refract(args[n - 3], args[n - 2], args[n - 1]); n -= 2; break;
-                case 65: args[n - 1]=zero(args[n - 1]); --n; break;
+                case 65: args[n - 1]=notOperator(args[n - 1]); break;
 
             }
         }

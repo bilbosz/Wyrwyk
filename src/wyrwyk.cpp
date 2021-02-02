@@ -107,10 +107,13 @@ void Wyrwyk::DrawImGui()
             ImGui::SliderFloat( text, &m_c, -10.0f, 10.0f );
         }
         {
-            auto text = "Supersampling";
+            auto text = "Multisampling";
             auto textSize = ImGui::CalcTextSize( text );
             ImGui::SetNextItemWidth( m_framebuffer[ 0 ] - textSize.x - 20.0f );
-            ImGui::SliderInt( text, &m_supersampling, 1, 4 );
+            if( ImGui::Checkbox( text, &m_isMultisampling ) )
+            {
+                m_multisampling = m_isMultisampling ? 2 : 1;
+            }
         }
     }
     ImGui::End();
@@ -207,7 +210,7 @@ void Wyrwyk::Render()
 
     glUseProgram( m_shader );
     int location = glGetUniformLocation( m_shader, "u_SupersamplingSide" );
-    glUniform1f( location, m_supersampling );
+    glUniform1f( location, m_multisampling );
     location = glGetUniformLocation( m_shader, "u_Resolution" );
     glUniform2f( location, m_framebuffer[ 0 ], m_framebuffer[ 1 ] );
     location = glGetUniformLocation( m_shader, "u_BoundingBox" );
@@ -240,7 +243,7 @@ void Wyrwyk::InitGlfw()
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 
-    m_window = glfwCreateWindow( 800, 800, ( m_baseTitle + " - " + m_expression ).c_str(), nullptr, nullptr );
+    m_window = glfwCreateWindow( m_framebuffer[ 0 ], m_framebuffer[ 1 ], ( m_baseTitle + " - " + m_expression ).c_str(), nullptr, nullptr );
     VERIFY( m_window );
     glfwMakeContextCurrent( m_window );
 

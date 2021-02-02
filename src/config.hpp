@@ -1,6 +1,6 @@
 #ifndef WYRWYK_CONFIG_HPP
 #define WYRWYK_CONFIG_HPP
 
-const int WYRWYK_MAX_EXPR_LEN = 256;
+const int WYRWYK_MAX_EXPR_LEN = 1000;
 
 #endif // WYRWYK_CONFIG_HPP

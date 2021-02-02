@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WYRWYK_DEBUG_HPP
+#define WYRWYK_DEBUG_HPP
 #ifdef DEBUG
 
 #    include <chrono>
@@ -27,7 +28,7 @@ private:
     static std::chrono::high_resolution_clock::duration s_pauseDuration;
 };
 
-#endif
+#endif // sDEBUG
 
 // clang-format off
 #ifdef DEBUG
@@ -68,3 +69,5 @@ private:
 #	define WARNING(message)
 #endif
 // clang-format on
+
+#endif // WYRWYK_DEBUG_HPP

@@ -67,7 +67,8 @@ private:
     float m_symbols[ 256 * 2 ];
     std::unique_ptr< Parser > m_parser;
     std::chrono::high_resolution_clock::time_point m_timer;
-    int m_supersampling = 1;
+    int m_multisampling = 1;
+    bool m_isMultisampling = false;
 
     void InitGlfw();
     void InitGlew();

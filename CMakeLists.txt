@@ -18,7 +18,7 @@ add_executable(wyrwyk
         contrib/imgui/imgui_widgets.cpp
         contrib/imgui/backends/imgui_impl_glfw.cpp
         contrib/imgui/backends/imgui_impl_opengl3.cpp
-        src/wyrwyk.cpp src/parser/parser.cpp src/parser/parser.hpp src/parser/symbol-def.cpp src/parser/symbol-def.hpp src/parser/symbol-defs.cpp src/parser/symbol-defs.hpp src/parser/tokenizer.cpp src/parser/tokenizer.hpp src/parser/translator.cpp src/parser/translator.hpp src/parser/validator.cpp src/parser/validator.hpp src/config.hpp)
+        src/wyrwyk.cpp src/parser/parser.cpp src/parser/parser.hpp src/parser/symbol-def.cpp src/parser/symbol-def.hpp src/parser/symbol-defs.cpp src/parser/symbol-defs.hpp src/parser/tokenizer.cpp src/parser/tokenizer.hpp src/parser/translator.cpp src/parser/translator.hpp src/parser/validator.cpp src/parser/validator.hpp src/config.hpp src/renderer/renderer.cpp src/renderer/renderer.hpp)
 
 # External libraries
 find_package(PkgConfig REQUIRED)

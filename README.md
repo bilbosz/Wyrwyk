@@ -7,6 +7,11 @@ sin( x * x + y * y ) + y > a
 cos(a)*x - sin(a)*y == (sin(a)*x + cos(a)*y) * (sin(a)*x + cos(a)*y)
 sin( t )
 sqrt(x*x + y*y) == a
+x*x*x -10*x*y + y*y*y == 0
+sin(x)*x*x -10*sin(x)*y + cos(y)*y*y <= 0
+sin(x)*x*x -10*sin(x)*y + cos(y)*y*y <= 2000*sin(t)
+Ying Yang:
+((x*x+(y+0.5)*(y+0.5)<=0.5*0.5&&!(x*x+(y+0.5)*(y+0.5)<=pow(0.5/3,2))||(x>0&&!(x*x+(y-0.5)*(y-0.5)<=0.5*0.5)&&!(x*x+(y+0.5)*(y+0.5)<=pow(0.5/3,2)))||x*x+(y-0.5)*(y-0.5)<=pow(0.5/3,2)||x*x+y*y==1))&&x*x+y*y<=1
 ```
 
 ## Requirements
@@ -15,7 +20,7 @@ sqrt(x*x + y*y) == a
 
 How To Find Libraries: https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Find-Libraries
 
-### [GLEW](http://glew.sourceforge.net/) - Graphics Library Framework
+### [GLEW](http://glew.sourceforge.net/) - The OpenGL Extension Wrangler Library
 
 ```shell
 sudo apt-get install libglew-dev
@@ -23,7 +28,7 @@ sudo apt-get install libglew-dev
 
 Documentation: http://glew.sourceforge.net/basic.html
 
-### [GLFW](https://www.glfw.org/) - The OpenGL Extension Wrangler Library
+### [GLFW](https://www.glfw.org/) - Graphics Library Framework
 
 ```shell
 sudo apt-get install libglfw3-dev
