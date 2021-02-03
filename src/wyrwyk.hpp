@@ -34,8 +34,8 @@ private:
     int m_rmbState{};
     double m_startMove[ 2 ] = { 0.0, 0.0 };
     std::string m_baseTitle = "Wyrwyk - Implicit Curve Rasterizer";
-    float m_falseColor[ 3 ] = { 0.98f, 0.98f, 1.0f };
-    float m_trueColor[ 3 ] = { 0.0f, 0.0f, 0.0f };
+    float m_falseColor[ 3 ] = { 0.0f, 0.0f, 0.0f };
+    float m_trueColor[ 3 ] = { 0.98f, 0.98f, 1.0f };
     float m_symbols[ WYRWYK_MAX_EXPR_LEN * 2 ];
     std::unique_ptr< Parser > m_parser;
     std::chrono::high_resolution_clock::time_point m_timer;

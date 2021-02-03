@@ -15,8 +15,10 @@ Ying Yang:
 (((cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+((sin(a)*x+cos(a)*y)+0.5)*((sin(a)*x+cos(a)*y)+0.5)<=0.5*0.5&&!((cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+((sin(a)*x+cos(a)*y)+0.5)*((sin(a)*x+cos(a)*y)+0.5)<=pow(0.5/3,2))||((cos(a)*x-sin(a)*y)>0&&!((cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+((sin(a)*x+cos(a)*y)-0.5)*((sin(a)*x+cos(a)*y)-0.5)<=0.5*0.5)&&!((cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+((sin(a)*x+cos(a)*y)+0.5)*((sin(a)*x+cos(a)*y)+0.5)<=pow(0.5/3,2)))||(cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+((sin(a)*x+cos(a)*y)-0.5)*((sin(a)*x+cos(a)*y)-0.5)<=pow(0.5/3,2)||(cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+(sin(a)*x+cos(a)*y)*(sin(a)*x+cos(a)*y)==1))&&(cos(a)*x-sin(a)*y)*(cos(a)*x-sin(a)*y)+(sin(a)*x+cos(a)*y)*(sin(a)*x+cos(a)*y)<=1
 cos(x*x+y*y) == sin(x*x+y*y)
 cos(x*x*x -10*x*y + y*y*y) == sin(x*x+y*y*a+b)
-Heart:
-
+cos(pow(x,y))==sin(pow(x,y))
+tan(x*y)==y/x
+Batman:
+(abs(x)>=4&&-(x/7)*(x/7)+1>0&&y>=-3*sqrt(-(x/7)*(x/7)+1)||1-(abs(abs(x)-2)-1)*(abs(abs(x)-2)-1)>0&&y>=abs(x/2)-(3*sqrt(33)-7)/112*x*x+sqrt(1-(abs(abs(x)-2)-1)*(abs(abs(x)-2)-1))-3)&&(abs(x)>=3&&-(x/7)*(x/7)+1>0&&y<=3*sqrt(-(x/7)*(x/7)+1)||abs(x)>=0.75&&abs(x)<1&&y<=9-8*abs(x)||abs(x)>=0.5&&abs(x)<0.75&&y<=3*abs(x)+0.75||abs(x)<=0.5&&y<=2.25||abs(x)>=1&&3-x*x+2*abs(x)>0&&y<=1.5-0.5*abs(x)-6*sqrt(10)/14*(sqrt(3-x*x+2*abs(x))-2))
 ```
 
 ## Requirements

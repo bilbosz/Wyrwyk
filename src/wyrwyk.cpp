@@ -57,7 +57,7 @@ void Wyrwyk::InitImGui()
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL( m_window, true );
     ImGui_ImplOpenGL3_Init( "#version 130" );
-    ImGui::StyleColorsLight();
+    ImGui::StyleColorsClassic();
 }
 
 void Wyrwyk::UpdateImGui()
@@ -68,6 +68,10 @@ void Wyrwyk::UpdateImGui()
 
     ImGui::SetNextWindowPos( ImVec2{ 0.0f, m_renderer->GetFramebufferHeight() }, 0, ImVec2{ 0.0f, 1.0f } );
     ImGui::SetNextWindowSize( ImVec2{ m_renderer->GetFramebufferWidth(), 160.0f } );
+
+    auto color = ImGui::GetStyleColorVec4( ImGuiCol_WindowBg );
+    color.w = 1.0f;
+    ImGui::PushStyleColor( ImGuiCol_WindowBg, color );
 
     ImGui::Begin( "Parameters", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize );
     {
@@ -125,10 +129,11 @@ void Wyrwyk::UpdateImGui()
             }
         }
     }
-    static bool once = false;
-    if( !once )
+    ImGui::PopStyleColor();
+    static bool once = true;
+    if( once )
     {
-        once = true;
+        once = false;
         ImGui::SetKeyboardFocusHere();
     }
     ImGui::End();
@@ -203,21 +208,17 @@ void Wyrwyk::RegisterGlfwCallbacks()
 
     glfwSetScrollCallback( m_window, []( GLFWwindow* window, double xoffset, double yoffset ) {
         auto wyrwyk = static_cast< Wyrwyk* >( glfwGetWindowUserPointer( window ) );
-        float mid[ 2 ] = { wyrwyk->m_boundingBox[ 0 ] + wyrwyk->m_boundingBox[ 2 ] * 0.5f, wyrwyk->m_boundingBox[ 1 ] + wyrwyk->m_boundingBox[ 3 ] * 0.5f };
+        double cursorPos[ 2 ];
+        glfwGetCursorPos( window, cursorPos, cursorPos + 1 );
+        cursorPos[ 0 ] /= wyrwyk->m_renderer->GetFramebufferWidth();
+        cursorPos[ 1 ] /= wyrwyk->m_renderer->GetFramebufferHeight();
+        cursorPos[ 1 ] = 1.0 - cursorPos[ 1 ];
+        float underCursor[ 2 ] = { static_cast< float >( cursorPos[ 0 ] ) * wyrwyk->m_boundingBox[ 2 ] + wyrwyk->m_boundingBox[ 0 ],
+                                   static_cast< float >( cursorPos[ 1 ] ) * wyrwyk->m_boundingBox[ 3 ] + wyrwyk->m_boundingBox[ 1 ] };
         wyrwyk->m_boundingBox[ 2 ] *= std::pow( 1.1f, -yoffset );
         wyrwyk->m_boundingBox[ 3 ] *= std::pow( 1.1f, -yoffset );
-        wyrwyk->m_boundingBox[ 0 ] = mid[ 0 ] - wyrwyk->m_boundingBox[ 2 ] * 0.5f;
-        wyrwyk->m_boundingBox[ 1 ] = mid[ 1 ] - wyrwyk->m_boundingBox[ 3 ] * 0.5f;
-        wyrwyk->m_renderer->SetUniform4fv( "u_BoundingBox", wyrwyk->m_boundingBox, 1 );
-    } );
-
-    glfwSetScrollCallback( m_window, []( GLFWwindow* window, double xoffset, double yoffset ) {
-        auto wyrwyk = static_cast< Wyrwyk* >( glfwGetWindowUserPointer( window ) );
-        float mid[ 2 ] = { wyrwyk->m_boundingBox[ 0 ] + wyrwyk->m_boundingBox[ 2 ] * 0.5f, wyrwyk->m_boundingBox[ 1 ] + wyrwyk->m_boundingBox[ 3 ] * 0.5f };
-        wyrwyk->m_boundingBox[ 2 ] *= std::pow( 1.1f, -yoffset );
-        wyrwyk->m_boundingBox[ 3 ] *= std::pow( 1.1f, -yoffset );
-        wyrwyk->m_boundingBox[ 0 ] = mid[ 0 ] - wyrwyk->m_boundingBox[ 2 ] * 0.5f;
-        wyrwyk->m_boundingBox[ 1 ] = mid[ 1 ] - wyrwyk->m_boundingBox[ 3 ] * 0.5f;
+        wyrwyk->m_boundingBox[ 0 ] = underCursor[ 0 ] - wyrwyk->m_boundingBox[ 2 ] * static_cast< float >( cursorPos[ 0 ] );
+        wyrwyk->m_boundingBox[ 1 ] = underCursor[ 1 ] - wyrwyk->m_boundingBox[ 3 ] * static_cast< float >( cursorPos[ 1 ] );
         wyrwyk->m_renderer->SetUniform4fv( "u_BoundingBox", wyrwyk->m_boundingBox, 1 );
     } );
 
