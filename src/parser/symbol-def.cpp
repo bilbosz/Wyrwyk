@@ -10,7 +10,7 @@ void SymbolDef::Load( const std::string& line )
 {
     std::stringstream oss;
     oss << line;
-    int type_;
+    int type_ = 0;
     oss >> type_ >> id >> name >> priority >> args;
     type = static_cast< SymbolType >( type_ );
 

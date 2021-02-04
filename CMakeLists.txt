@@ -3,12 +3,16 @@ project(wyrwyk)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_compile_definitions(DEBUG)
+# Build type dependent compiler options
+if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
+    add_compile_definitions(DEBUG)
+endif ()
 
+# Include project sources
 include_directories(src)
-
 include_directories(contrib/imgui)
 
+# Executable
 add_executable(wyrwyk
         src/main.cpp
         src/utils/debug.cpp
@@ -37,3 +41,13 @@ target_link_libraries(wyrwyk ${GLFW_LIBRARIES})
 find_package(GLEW REQUIRED)
 include_directories(${GLEW_INCLUDE_DIRS})
 target_link_libraries(wyrwyk ${GLEW_LIBRARIES})
+
+# Post build
+add_custom_command(TARGET wyrwyk POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/res
+        $<TARGET_FILE_DIR:wyrwyk>/res)
+
+# Installation
+install(TARGETS wyrwyk DESTINATION wyrwyk)
+install(DIRECTORY res DESTINATION wyrwyk)

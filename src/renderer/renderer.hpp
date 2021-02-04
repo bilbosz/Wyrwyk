@@ -26,10 +26,10 @@ public:
     [[nodiscard]] float GetFramebufferWidth() const;
     [[nodiscard]] float GetFramebufferHeight() const;
 
-    void SetUniform1fv( const std::string& name, const float* values, size_t count = 1 );
-    void SetUniform2fv( const std::string& name, const float* values, size_t count = 1 );
-    void SetUniform3fv( const std::string& name, const float* values, size_t count = 1 );
-    void SetUniform4fv( const std::string& name, const float* values, size_t count = 1 );
+    void SetUniform1fv( const std::string& name, const float* values, int count = 1 );
+    void SetUniform2fv( const std::string& name, const float* values, int count = 1 );
+    void SetUniform3fv( const std::string& name, const float* values, int count = 1 );
+    void SetUniform4fv( const std::string& name, const float* values, int count = 1 );
 
 private:
     float m_framebufferSize[ 2 ] = { 500.0f, 500.0f };

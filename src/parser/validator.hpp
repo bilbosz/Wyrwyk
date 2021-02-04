@@ -12,12 +12,11 @@ using Tokens = std::vector< Token >;
 class Validator
 {
 public:
-    Validator( const std::string& file, SymbolDefs& symbolsDefs );
+    explicit Validator( const std::string& file );
     [[nodiscard]] bool Validate( const Tokens& tokens ) const;
 
 private:
     void LoadPredecessorTable( const std::string& file );
-    SymbolDefs& m_symbolDefs;
     [[nodiscard]] bool IsValidPredecessor( SymbolType previous, SymbolType current ) const;
 
     bool m_validPredecessor[ SYMBOL_TYPE_COUNT * SYMBOL_TYPE_COUNT ];

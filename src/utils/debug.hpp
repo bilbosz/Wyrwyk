@@ -17,7 +17,7 @@ public:
     {
         s_expensive = value;
     }
-    static bool IsExpensive()
+    [[maybe_unused]] static bool IsExpensive()
     {
         return s_expensive;
     }

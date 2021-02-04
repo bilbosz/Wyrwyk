@@ -1,11 +1,10 @@
 #include "parser/validator.hpp"
 #include "parser/symbol-defs.hpp"
-#include "parser/tokenizer.hpp"
 #include "utils/debug.hpp"
-
 #include <fstream>
+#include <sstream>
 
-Validator::Validator( const std::string& file, SymbolDefs& symbolDefs ) : m_symbolDefs( symbolDefs ), m_validPredecessor()
+Validator::Validator( const std::string& file ) : m_validPredecessor()
 {
     LoadPredecessorTable( file );
 }

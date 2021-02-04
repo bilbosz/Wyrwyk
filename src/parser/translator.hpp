@@ -15,7 +15,7 @@ public:
 
     [[nodiscard]] Tokens CreatePostfixNotation() const;
     bool Translate( const Tokens& tokens, Tokens& outNotation ) const;
-    void PrintNotation( const Tokens& outNotation ) const;
+    [[maybe_unused]] void PrintNotation( const Tokens& outNotation ) const;
     bool AssignOutputData( const Tokens& outNotation, float* outData );
     void PrintOutput( const float* output ) const;
 

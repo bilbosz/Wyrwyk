@@ -157,7 +157,7 @@ void Translator::UnwindStack( std::vector< Token >& output, std::vector< Token >
     }
 }
 
-void Translator::PrintNotation( const Tokens& outNotation ) const
+[[maybe_unused]] void Translator::PrintNotation( const Tokens& outNotation ) const
 {
     std::map< SymbolType, std::string > typeNames = { { SymbolType::Const, "Const" },
                                                       { SymbolType::Parameter, "Parameter" },
@@ -196,7 +196,7 @@ bool Translator::AssignOutputData( const Tokens& outNotation, float* outData )
         }
         else
         {
-            value = static_cast< float >( symbol.def->id );
+            value = symbol.def->id;
         }
         ++i;
     }
@@ -209,7 +209,7 @@ bool Translator::AssignOutputData( const Tokens& outNotation, float* outData )
 void Translator::PrintOutput( const float* output ) const
 {
     MESSAGE( "OUTPUT---------------------------" );
-    while( *output )
+    while( static_cast< bool >( *output ) )
     {
         const float& type = *( output + 0 );
         const float& value = *( output + 1 );

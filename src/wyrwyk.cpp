@@ -7,10 +7,8 @@
 #include "utils/debug.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <cmath>
-#include <fstream>
 
-Wyrwyk::Wyrwyk( int argc, char* argv[] )
+Wyrwyk::Wyrwyk( [[maybe_unused]] int argc, [[maybe_unused]] char* argv[] )
     : m_parser( std::make_unique< Parser >() ), m_timer( std::chrono::high_resolution_clock::now() ), m_renderer( std::make_unique< Renderer >() )
 {
     m_parser->Parse( m_expression, m_symbols );
@@ -176,7 +174,11 @@ void Wyrwyk::InitGlfw()
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 
     m_window = glfwCreateWindow(
-        m_renderer->GetFramebufferWidth(), m_renderer->GetFramebufferHeight(), ( m_baseTitle + " - " + std::string( m_expression ) ).c_str(), nullptr, nullptr );
+        static_cast< int >( m_renderer->GetFramebufferWidth() ),
+        static_cast< int >( m_renderer->GetFramebufferHeight() ),
+        ( m_baseTitle + " - " + std::string( m_expression ) ).c_str(),
+        nullptr,
+        nullptr );
     CHECK( m_window );
     glfwMakeContextCurrent( m_window );
 

@@ -156,28 +156,28 @@ uint Renderer::CreateShaders( const std::string& vertexShaderSource, const std::
     return program;
 }
 
-void Renderer::SetUniform1fv( const std::string& name, const float* values, size_t count )
+void Renderer::SetUniform1fv( const std::string& name, const float* values, int count )
 {
     auto location = GetUniformLocation( name );
     glUniform1fv( location, count, values );
     m_dirty = true;
 }
 
-void Renderer::SetUniform2fv( const std::string& name, const float* values, size_t count )
+void Renderer::SetUniform2fv( const std::string& name, const float* values, int count )
 {
     auto location = GetUniformLocation( name );
     glUniform2fv( location, count, values );
     m_dirty = true;
 }
 
-void Renderer::SetUniform3fv( const std::string& name, const float* values, size_t count )
+void Renderer::SetUniform3fv( const std::string& name, const float* values, int count )
 {
     auto location = GetUniformLocation( name );
     glUniform3fv( location, count, values );
     m_dirty = true;
 }
 
-void Renderer::SetUniform4fv( const std::string& name, const float* values, size_t count )
+void Renderer::SetUniform4fv( const std::string& name, const float* values, int count )
 {
     auto location = GetUniformLocation( name );
     glUniform4fv( location, count, values );

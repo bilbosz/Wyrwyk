@@ -6,9 +6,9 @@
 
 Parser::Parser()
     : m_symbolDefs( std::make_unique< SymbolDefs >( "res/parser/symbol-defs.tsv" ) )
-    , m_tokenizer( std::make_unique< Tokenizer >( *m_symbolDefs.get() ) )
-    , m_validator( std::make_unique< Validator >( "res/parser/valid-predecessors.tsv", *m_symbolDefs.get() ) )
-    , m_translator( std::make_unique< Translator >( *m_symbolDefs.get() ) )
+    , m_tokenizer( std::make_unique< Tokenizer >( *m_symbolDefs.get() ) ) // NOLINT(readability-redundant-smartptr-get)
+    , m_validator( std::make_unique< Validator >( "res/parser/valid-predecessors.tsv" ) )
+    , m_translator( std::make_unique< Translator >( *m_symbolDefs ) ) // NOLINT(readability-redundant-smartptr-get)
 {
 }
 
@@ -47,7 +47,7 @@ bool Parser::IsSymbolUsed( float* expression, const std::string& name ) const
     {
         auto type = *( it );
         auto value = *( it + 1 );
-        if( static_cast< float >( symbol->type ) == type && static_cast< float >( symbol->id ) == value )
+        if( static_cast< float >( symbol->type ) == type && symbol->id == value )
         {
             return true;
         }
