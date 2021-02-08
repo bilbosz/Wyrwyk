@@ -20,10 +20,10 @@ Wyrwyk::~Wyrwyk()
 
 void Wyrwyk::Run()
 {
+    m_renderer->SetFramebufferSize( 800.0f, 800.0f );
     InitGlfw();
     InitGlew();
     m_renderer->Init();
-    m_renderer->SetFramebufferSize( 500.0f, 500.0f );
     m_renderer->SetUniform1fv( "u_SupersamplingSide", &m_multisampling, 1 );
     m_renderer->SetUniform2fv( "u_Resolution", m_renderer->GetFramebufferSize(), 1 );
     m_renderer->SetUniform4fv( "u_BoundingBox", m_boundingBox, 1 );
@@ -147,7 +147,7 @@ void Wyrwyk::Update()
 {
     glfwPollEvents();
     UpdateImGui();
-    m_params[ 3 ] = std::chrono::duration_cast< std::chrono::microseconds >( m_timer - std::chrono::high_resolution_clock::now() ).count() / 1'000'000.0f;
+    m_params[ 3 ] = std::chrono::duration_cast< std::chrono::microseconds >( std::chrono::high_resolution_clock::now() - m_timer ).count() / 1'000'000.0f;
     if( m_parser->IsSymbolUsed( m_symbols, "t" ) )
     {
         m_renderer->SetUniform1fv( "u_Params", m_params, WYRWYK_PARAMS_COUNT );
@@ -187,7 +187,7 @@ void Wyrwyk::InitGlfw()
 
 void Wyrwyk::InitGlew()
 {
-    auto glewInitResult = glewInit();
+    [[maybe_unused]] auto glewInitResult = glewInit();
     CHECK( glewInitResult == GLEW_OK );
 }
 
