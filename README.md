@@ -9,13 +9,13 @@
 
 ## Theory
 
-According to Wikipedia implicit curve is a curve in a plane defined by an a relation of the form R(x, y) = 0, where R is a function of two coordinate variables.
+Implicit curve is a curve in a plane defined by a relation of the form R(x, y) = 0, where R is a function of two coordinate variables.
 
 ### Example
 
 We want to show the graph y * y + x * x = 1.
 
-We rearrange the equation a bit so that it has the form R (x, y) == 0.
+We rearrange the equation a bit so that it has the form R (x, y) = 0.
 
 y * y + x * x - 1 = 0
 
