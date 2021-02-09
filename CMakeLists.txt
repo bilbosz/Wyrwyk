@@ -4,7 +4,7 @@ project(wyrwyk)
 set(CMAKE_CXX_STANDARD 17)
 
 # Build type dependent compiler options
-if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
+if ("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
     add_compile_definitions(DEBUG)
 endif ()
 
