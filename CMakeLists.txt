@@ -11,6 +11,7 @@ endif ()
 # Include project sources
 include_directories(src)
 include_directories(contrib/imgui)
+include_directories(contrib/stb)
 
 # Executable
 add_executable(wyrwyk
@@ -22,6 +23,7 @@ add_executable(wyrwyk
         contrib/imgui/imgui_widgets.cpp
         contrib/imgui/backends/imgui_impl_glfw.cpp
         contrib/imgui/backends/imgui_impl_opengl3.cpp
+        contrib/stb/stb_image_write.h
         src/wyrwyk.cpp src/parser/parser.cpp src/parser/symbol-def.cpp src/parser/symbol-defs.cpp src/parser/tokenizer.cpp src/parser/translator.cpp src/parser/validator.cpp src/renderer/renderer.cpp src/utils/load-file.cpp)
 
 # External libraries

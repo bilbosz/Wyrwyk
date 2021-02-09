@@ -1,6 +1,13 @@
 # Wyrwyk - Implicit Curve Rasterizer
 
+
 ## Examples
+<img src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/fan.gif" width="200" />
+```
+sin(a)*x == -cos(a)*y
+```
+
+
 ```
 sin(a)*x == -cos(a)*y
 sin( x * x + y * y ) + y > a

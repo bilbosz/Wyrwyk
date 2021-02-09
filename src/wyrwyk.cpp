@@ -1,3 +1,5 @@
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+
 #include "wyrwyk.hpp"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -7,6 +9,8 @@
 #include "utils/debug.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <iomanip>
+#include <stb_image_write.h>
 
 Wyrwyk::Wyrwyk( [[maybe_unused]] int argc, [[maybe_unused]] char* argv[] )
     : m_parser( std::make_unique< Parser >() ), m_timer( std::chrono::high_resolution_clock::now() ), m_renderer( std::make_unique< Renderer >() )
@@ -118,12 +122,37 @@ void Wyrwyk::UpdateImGui()
         }
         {
             auto text = "Multisampling";
-            auto textSize = ImGui::CalcTextSize( text );
-            ImGui::SetNextItemWidth( m_renderer->GetFramebufferWidth() - textSize.x - 20.0f );
             if( ImGui::Checkbox( text, &m_isMultisampling ) )
             {
-                m_multisampling = m_isMultisampling ? 2.0f : 1.0f;
+                m_multisampling = m_isMultisampling ? 16.0f : 1.0f;
                 m_renderer->SetUniform1fv( "u_SupersamplingSide", &m_multisampling, 1 );
+            }
+        }
+        ImGui::SameLine();
+        {
+            auto text = "Screenshot";
+            if( ImGui::Button( text ) )
+            {
+                MakeScreenshot();
+            }
+        }
+        ImGui::SameLine();
+        {
+            if( !m_isRecording )
+            {
+                auto text = "Start Recording";
+                if( ImGui::Button( text ) )
+                {
+                    StartRecording();
+                }
+            }
+            else
+            {
+                auto text = "Stop Recording";
+                if( ImGui::Button( text ) )
+                {
+                    StopRecording();
+                }
             }
         }
     }
@@ -147,10 +176,15 @@ void Wyrwyk::Update()
 {
     glfwPollEvents();
     UpdateImGui();
-    m_params[ 3 ] = std::chrono::duration_cast< std::chrono::microseconds >( std::chrono::high_resolution_clock::now() - m_timer ).count() / 1'000'000.0f;
+    auto t = std::chrono::duration_cast< std::chrono::microseconds >( std::chrono::high_resolution_clock::now() - m_timer ).count() / 1'000'000.0f;
+    m_params[ 3 ] = t;
     if( m_parser->IsSymbolUsed( m_symbols, "t" ) )
     {
         m_renderer->SetUniform1fv( "u_Params", m_params, WYRWYK_PARAMS_COUNT );
+    }
+    if( m_isRecording )
+    {
+        MakeScreenshot( "recording" );
     }
     if( glfwWindowShouldClose( m_window ) )
     {
@@ -251,6 +285,14 @@ void Wyrwyk::RegisterGlfwCallbacks()
             wyrwyk->m_startMove[ 1 ] = ypos;
         }
     } );
+
+    glfwSetKeyCallback( m_window, []( GLFWwindow* window, int key, int scancode, int action, int mods ) {
+        auto wyrwyk = static_cast< Wyrwyk* >( glfwGetWindowUserPointer( window ) );
+        if( action == GLFW_PRESS && key == GLFW_KEY_ESCAPE )
+        {
+            wyrwyk->Exit( 0 );
+        }
+    } );
 }
 
 void Wyrwyk::Terminate()
@@ -262,4 +304,43 @@ void Wyrwyk::RenderImGui()
 {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
+}
+
+void Wyrwyk::MakeScreenshot( const std::string& prefix ) const
+{
+    auto w = static_cast< int >( m_renderer->GetFramebufferWidth() );
+    auto h = static_cast< int >( m_renderer->GetFramebufferHeight() );
+    const auto comp = 4;
+    auto size = w * h * comp;
+    auto data = malloc( size );
+    if( data )
+    {
+        glReadPixels( 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data );
+        stbi_flip_vertically_on_write( true );
+
+        std::string file;
+        {
+            auto now = std::chrono::system_clock::now().time_since_epoch().count();
+            std::ostringstream out;
+            out << prefix << std::setfill( '0' ) << std::setw( std::numeric_limits< decltype( now ) >::digits10 ) << now << ".png";
+            file = out.str();
+        }
+
+        VERIFY( stbi_write_png( file.c_str(), w, h, comp, data, w * comp ) );
+        free( data );
+    }
+    else
+    {
+        ASSERT( false, "Not enough memory available to make screenshot" );
+    }
+}
+
+void Wyrwyk::StartRecording()
+{
+    m_isRecording = true;
+}
+
+void Wyrwyk::StopRecording()
+{
+    m_isRecording = false;
 }

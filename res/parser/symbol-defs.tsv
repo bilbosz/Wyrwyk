@@ -3,8 +3,8 @@ SymbolType	Id	Name	Priority	Args
 2	0	a	0	0
 2	1	b	0	0
 2	2	c	0	0
-2   3   t   0   0
-2   4   pi  0   0
+2	3	t	0	0
+2	4	pi  0	0
 3	0	x	0	0
 3	1	y	0	0
 4	0	*	4	2

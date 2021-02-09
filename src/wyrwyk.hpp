@@ -43,6 +43,7 @@ private:
     float m_multisampling = 1.0f;
     bool m_isMultisampling = false;
     std::unique_ptr< Renderer > m_renderer;
+    bool m_isRecording = false;
 
     void InitImGui();
     void UpdateImGui();
@@ -54,6 +55,9 @@ private:
     void InitGlew();
     void RegisterGlfwCallbacks();
     void Terminate();
+    void MakeScreenshot( const std::string& prefix = "screenshot_" ) const;
+    void StartRecording();
+    void StopRecording();
 };
 
 #endif // WYRWYK_WYRWYK_HPP
