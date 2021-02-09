@@ -1,5 +1,5 @@
 # Wyrwyk - Implicit Curve Rasterizer
-<img alt="loop" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/loop.png" />
+![loop](gallery/loop.png)
 
 ## Table of contents
 * [Theory](#theory)
@@ -58,91 +58,92 @@ make
 ## Gallery
 
 ### Fan
-<img alt="fan" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/fan.gif" height="300" />
+![fan](gallery/fan.gif)
 
 ```
 sin(t)*y == cos(t)*x
 ```
 
 ### Parametrized
-<img alt="param1" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/param1.gif" width="300" />
+![param1](gallery/param1.gif)
 
 ```
 sin(x*x+y*y)+y > a
 ```
 
 ### Parabola rotation
-<img alt="parrot" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/parrot.gif" width="300" />
+
+![parrot](gallery/parrot.gif)
 
 ```
 y == x*x || (x*sin(a)+y*cos(a)) == (x*cos(a)-y*sin(a))*(x*cos(a)-y*sin(a))
 ```
 
 ### Phased sinus
-<img alt="phasin" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/phasin.gif" width="300" />
+![phasin](gallery/phasin.gif)
 
 ```
 y == sin(t+x)
 ```
 
 ### Spiral
-<img alt="spiral" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/spiral.png" width="300" />
+![spiral](gallery/spiral.png)
 
 ```
 sqrt(x*x+y*y) == atan(y,x)/(2*pi)+0.5
 ```
 
 ### Phonograph disc
-<img alt="vinyl" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/vinyl.png" width="300" />
+![vinyl](gallery/vinyl.png)
 
 ```
 fract(sqrt(x*x+y*y)) <= fract(atan(y,x)/(2*pi)+0.5)
 ```
 
 ### Loop
-<img alt="loop" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/loop.png" width="300" />
+![loop](gallery/loop.png)
 
 ```
 x*x*x-10*x*y+y*y*y == 0
 ```
 
 ### Labyrinth
-<img alt="labi" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/labi.png" width="300" />
+![labi](gallery/labi.png)
 
 ```
 sin(x)*x*x-10*sin(x)*y+cos(y)*y*y <= 0
 ```
 
 ### Yin Yang
-<img alt="yin-yang" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/yin-yang.png" width="300" />
+![yin-yang](gallery/yin-yang.png)
 
 ```
 ((x*x+(y+0.5)*(y+0.5)<=0.5*0.5&&!(x*x+(y+0.5)*(y+0.5)<=pow(0.5/3,2))||(x>0&&!(x*x+(y-0.5)*(y-0.5)<=0.5*0.5)&&!(x*x+(y+0.5)*(y+0.5)<=pow(0.5/3,2)))||x*x+(y-0.5)*(y-0.5)<=pow(0.5/3,2)||x*x+y*y==1))&&x*x+y*y<=1
 ```
 
 ### Tiles
-<img alt="tiles" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/tiles.png" width="300" />
+![tiles](gallery/tiles.png)
 
 ```
 cos(x*x+y*y) <= sin(x*x+y*y)
 ```
 
 ### Onion
-<img alt="onion" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/onion.png" width="300" />
+![onion](gallery/onion.png)
 
 ```
 cos(x*x*x-10*x*y+y*y*y) == sin(x*x+y*y)
 ```
 
 ### Tiles 2
-<img alt="tiles2" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/tiles2.png" width="300" />
+![tiles2](gallery/tiles2.png)
 
 ```
 tan(x*y) == y/x
 ```
 
 ### Batman
-<img alt="batman" src="https://raw.githubusercontent.com/bilbosz/Wyrwyk/master/gallery/batman.png" width="300" />
+![batman](gallery/batman.png)
 
 ```
 (abs(x)>=4&&-(x/7)*(x/7)+1>0&&y>=-3*sqrt(-(x/7)*(x/7)+1)||1-(abs(abs(x)-2)-1)*(abs(abs(x)-2)-1)>0&&y>=abs(x/2)-(3*sqrt(33)-7)/112*x*x+sqrt(1-(abs(abs(x)-2)-1)*(abs(abs(x)-2)-1))-3)&&(abs(x)>=3&&-(x/7)*(x/7)+1>0&&y<=3*sqrt(-(x/7)*(x/7)+1)||abs(x)>=0.75&&abs(x)<1&&y<=9-8*abs(x)||abs(x)>=0.5&&abs(x)<0.75&&y<=3*abs(x)+0.75||abs(x)<=0.5&&y<=2.25||abs(x)>=1&&3-x*x+2*abs(x)>0&&y<=1.5-0.5*abs(x)-6*sqrt(10)/14*(sqrt(3-x*x+2*abs(x))-2))
