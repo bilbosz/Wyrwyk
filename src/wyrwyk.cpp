@@ -176,7 +176,9 @@ void Wyrwyk::Update()
 {
     glfwPollEvents();
     UpdateImGui();
-    auto t = std::chrono::duration_cast< std::chrono::microseconds >( std::chrono::high_resolution_clock::now() - m_timer ).count() / 1'000'000.0f;
+    static auto t = 0.0f;
+    t += 0.1f;
+    //    auto t = std::chrono::duration_cast< std::chrono::microseconds >( std::chrono::high_resolution_clock::now() - m_timer ).count() / 1'000'000.0f;
     m_params[ 3 ] = t;
     if( m_parser->IsSymbolUsed( m_symbols, "t" ) )
     {
