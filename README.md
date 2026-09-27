@@ -105,7 +105,7 @@ The executable can be started from any directory. Copy it together with the `res
 
 ### Troubleshooting
 
-* Errors are printed to the console, so run the executable from a terminal to see them.
+* Release build exits with code 1 without any message when it cannot start. Build with `-DCMAKE_BUILD_TYPE=Debug` (or `--config Debug`) and run it from a terminal to see error messages.
 * `Could not create window with OpenGL 3.3 core profile context` - update graphics drivers. In a virtual machine enable 3D acceleration.
 * To force the use of GLFW downloaded and built from source add `-DWYRWYK_USE_SYSTEM_GLFW=OFF` to the first CMake command.
 

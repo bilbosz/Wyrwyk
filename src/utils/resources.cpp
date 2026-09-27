@@ -1,6 +1,6 @@
 #include "utils/resources.hpp"
+#include "utils/debug.hpp"
 #include <filesystem>
-#include <iostream>
 #include <system_error>
 #include <vector>
 
@@ -95,11 +95,12 @@ bool InitResources( const char* argv0 )
         }
     }
 
-    std::cerr << "Could not find the \"res\" directory. Searched in:\n";
+#ifdef DEBUG
     for( const auto& candidate : candidates )
     {
-        std::cerr << "  " << candidate.string() << "\n";
+        WARNING( "Could not find resources in: " << candidate.string().c_str() );
     }
+#endif
     return false;
 }
 

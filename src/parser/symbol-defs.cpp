@@ -2,7 +2,6 @@
 #include "utils/debug.hpp"
 #include <algorithm>
 #include <fstream>
-#include <iostream>
 
 SymbolDefs::SymbolDefs( const std::string& file )
 {
@@ -20,7 +19,7 @@ void SymbolDefs::Load( const std::string& file )
     std::ifstream ifs( file );
     if( !ifs.is_open() )
     {
-        std::cerr << "Could not open file: " << file << std::endl;
+        ASSERT( false, "Could not open file: " << file.c_str() );
         return;
     }
 

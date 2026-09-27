@@ -3,7 +3,6 @@
 #include "utils/load-file.hpp"
 #include "utils/resources.hpp"
 #include <glad/gl.h>
-#include <iostream>
 #include <vector>
 
 Renderer::Renderer()
@@ -198,11 +197,13 @@ unsigned int Renderer::CompileShader( unsigned int type, const std::string& sour
     glGetShaderiv( id, GL_COMPILE_STATUS, &result );
     if( result == GL_FALSE )
     {
+#ifdef DEBUG
         GLint length = 0;
         glGetShaderiv( id, GL_INFO_LOG_LENGTH, &length );
         std::vector< char > message( static_cast< size_t >( length ) + 1 );
         glGetShaderInfoLog( id, static_cast< GLsizei >( message.size() ), nullptr, message.data() );
-        std::cerr << ( type == GL_VERTEX_SHADER ? "Vertex" : "Fragment" ) << " shader compilation failed:\n" << message.data() << std::endl;
+        ASSERT( false, ( type == GL_VERTEX_SHADER ? "Vertex" : "Fragment" ) << " shader error: " << message.data() );
+#endif
         glDeleteShader( id );
         return 0;
     }
@@ -233,11 +234,13 @@ unsigned int Renderer::CreateShaders( const std::string& vertexShaderSource, con
     glGetProgramiv( program, GL_LINK_STATUS, &result );
     if( result == GL_FALSE )
     {
+#ifdef DEBUG
         GLint length = 0;
         glGetProgramiv( program, GL_INFO_LOG_LENGTH, &length );
         std::vector< char > message( static_cast< size_t >( length ) + 1 );
         glGetProgramInfoLog( program, static_cast< GLsizei >( message.size() ), nullptr, message.data() );
-        std::cerr << "Shader program linking failed:\n" << message.data() << std::endl;
+        ASSERT( false, "Shader program link error: " << message.data() );
+#endif
         glDeleteProgram( program );
         return 0;
     }

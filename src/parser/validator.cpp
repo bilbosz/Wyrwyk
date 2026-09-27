@@ -2,7 +2,6 @@
 #include "parser/symbol-defs.hpp"
 #include "utils/debug.hpp"
 #include <fstream>
-#include <iostream>
 #include <sstream>
 
 Validator::Validator( const std::string& file ) : m_validPredecessor()
@@ -49,7 +48,7 @@ void Validator::LoadPredecessorTable( const std::string& file )
     std::ifstream ifs( file );
     if( !ifs.is_open() )
     {
-        std::cerr << "Could not open file: " << file << std::endl;
+        ASSERT( false, "Could not open file: " << file.c_str() );
         return;
     }
 

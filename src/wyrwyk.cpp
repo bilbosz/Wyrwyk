@@ -11,7 +11,6 @@
 #include <cstdlib>
 #include <glad/gl.h>
 #include <iomanip>
-#include <iostream>
 #include <limits>
 #include <sstream>
 #include <stb_image_write.h>
@@ -31,7 +30,6 @@ void Wyrwyk::Run()
     m_renderer->SetFramebufferSize( 800.0f, 800.0f );
     if( !InitGlfw() || !InitGlad() || !m_renderer->Init() )
     {
-        std::cerr << "Initialization failed" << std::endl;
         Exit( 1 );
         Terminate();
         return;
@@ -221,9 +219,12 @@ void Wyrwyk::Render()
 
 bool Wyrwyk::InitGlfw()
 {
-    glfwSetErrorCallback( []( int error, const char* description ) { std::cerr << "GLFW error " << error << ": " << description << std::endl; } );
+#ifdef DEBUG
+    glfwSetErrorCallback( []( int error, const char* description ) { WARNING( "GLFW error " << error << ": " << description ); } );
+#endif
     if( !glfwInit() )
     {
+        ASSERT( false, "Could not initialize GLFW" );
         return false;
     }
 
@@ -241,7 +242,7 @@ bool Wyrwyk::InitGlfw()
         nullptr );
     if( !m_window )
     {
-        std::cerr << "Could not create window with OpenGL 3.3 core profile context. Make sure your graphics drivers are up to date." << std::endl;
+        ASSERT( false, "Could not create window with OpenGL 3.3 core profile context" );
         return false;
     }
     glfwMakeContextCurrent( m_window );
@@ -255,7 +256,7 @@ bool Wyrwyk::InitGlad()
 {
     if( !gladLoadGL( glfwGetProcAddress ) )
     {
-        std::cerr << "Could not load OpenGL functions" << std::endl;
+        ASSERT( false, "Could not load OpenGL functions" );
         return false;
     }
     return true;
@@ -391,7 +392,7 @@ void Wyrwyk::MakeScreenshot( const std::string& prefix ) const
 
         if( !stbi_write_png( file.c_str(), w, h, comp, data.data(), w * comp ) )
         {
-            std::cerr << "Could not save screenshot: " << file << std::endl;
+            WARNING( "Could not save screenshot: " << file.c_str() );
         }
     }
 }
