@@ -1,6 +1,7 @@
 #ifndef WYRWYK_SYMBOL_DEF_HPP
 #define WYRWYK_SYMBOL_DEF_HPP
 
+#include <cstddef>
 #include <string>
 
 enum class SymbolType

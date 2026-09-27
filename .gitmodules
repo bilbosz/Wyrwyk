@@ -1,6 +1,0 @@
-[submodule "contrib/imgui"]
-	path = contrib/imgui
-	url = https://github.com/ocornut/imgui.git
-[submodule "contrib/stb"]
-	path = contrib/stb
-	url = https://github.com/nothings/stb.git

@@ -7,9 +7,12 @@
 #include "parser/parser.hpp"
 #include "renderer/renderer.hpp"
 #include "utils/debug.hpp"
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <cstdlib>
+#include <glad/gl.h>
 #include <iomanip>
+#include <limits>
+#include <sstream>
 #include <stb_image_write.h>
 
 Wyrwyk::Wyrwyk( [[maybe_unused]] int argc, [[maybe_unused]] char* argv[] )
@@ -25,16 +28,19 @@ Wyrwyk::~Wyrwyk()
 void Wyrwyk::Run()
 {
     m_renderer->SetFramebufferSize( 800.0f, 800.0f );
-    InitGlfw();
-    InitGlew();
-    m_renderer->Init();
+    if( !InitGlfw() || !InitGlad() || !m_renderer->Init() )
+    {
+        Exit( 1 );
+        Terminate();
+        return;
+    }
     m_renderer->SetUniform1fv( "u_SupersamplingSide", &m_multisampling, 1 );
     m_renderer->SetUniform2fv( "u_Resolution", m_renderer->GetFramebufferSize(), 1 );
     m_renderer->SetUniform4fv( "u_BoundingBox", m_boundingBox, 1 );
     m_renderer->SetUniform1fv( "u_Params", m_params, WYRWYK_PARAMS_COUNT );
     m_renderer->SetUniform3fv( "u_FalseColor", m_falseColor, 1 );
     m_renderer->SetUniform3fv( "u_TrueColor", m_trueColor, 1 );
-    m_renderer->SetUniform2fv( "u_Symbols", m_symbols, WYRWYK_MAX_EXPR_LEN );
+    m_renderer->SetUniform4fv( "u_Symbols", m_symbols, WYRWYK_MAX_EXPR_LEN / 2 );
 
     RegisterGlfwCallbacks();
     InitImGui();
@@ -57,8 +63,10 @@ int Wyrwyk::ReturnCode() const
 void Wyrwyk::InitImGui()
 {
     ImGui::CreateContext();
+    // Layout is fixed, there is nothing worth saving to imgui.ini
+    ImGui::GetIO().IniFilename = nullptr;
     ImGui_ImplGlfw_InitForOpenGL( m_window, true );
-    ImGui_ImplOpenGL3_Init( "#version 130" );
+    ImGui_ImplOpenGL3_Init( "#version 330 core" );
     ImGui::StyleColorsClassic();
 }
 
@@ -68,8 +76,10 @@ void Wyrwyk::UpdateImGui()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::SetNextWindowPos( ImVec2{ 0.0f, m_renderer->GetFramebufferHeight() }, 0, ImVec2{ 0.0f, 1.0f } );
-    ImGui::SetNextWindowSize( ImVec2{ m_renderer->GetFramebufferWidth(), 160.0f } );
+    // Display size is in window coordinates which differ from framebuffer pixels on HiDPI screens
+    const auto displaySize = ImGui::GetIO().DisplaySize;
+    ImGui::SetNextWindowPos( ImVec2{ 0.0f, displaySize.y }, 0, ImVec2{ 0.0f, 1.0f } );
+    ImGui::SetNextWindowSize( ImVec2{ displaySize.x, 160.0f } );
 
     auto color = ImGui::GetStyleColorVec4( ImGuiCol_WindowBg );
     color.w = 1.0f;
@@ -83,12 +93,18 @@ void Wyrwyk::UpdateImGui()
         {
             auto text = "Input";
             auto textSize = ImGui::CalcTextSize( text );
-            ImGui::SetNextItemWidth( m_renderer->GetFramebufferWidth() - textSize.x - 20.0f );
+            ImGui::SetNextItemWidth( displaySize.x - textSize.x - 20.0f );
+            static bool once = true;
+            if( once )
+            {
+                once = false;
+                ImGui::SetKeyboardFocusHere();
+            }
             if( ImGui::InputText( text, m_expression, WYRWYK_MAX_EXPR_LEN ) )
             {
                 if( m_parser->Parse( m_expression, m_symbols ) )
                 {
-                    m_renderer->SetUniform2fv( "u_Symbols", m_symbols, WYRWYK_MAX_EXPR_LEN );
+                    m_renderer->SetUniform4fv( "u_Symbols", m_symbols, WYRWYK_MAX_EXPR_LEN / 2 );
                     glfwSetWindowTitle( m_window, ( m_baseTitle + " - " + std::string( m_expression ) ).c_str() );
                 }
             }
@@ -133,7 +149,7 @@ void Wyrwyk::UpdateImGui()
             auto text = "Screenshot";
             if( ImGui::Button( text ) )
             {
-                MakeScreenshot();
+                m_isScreenshotRequested = true;
             }
         }
         ImGui::SameLine();
@@ -156,14 +172,8 @@ void Wyrwyk::UpdateImGui()
             }
         }
     }
-    ImGui::PopStyleColor();
-    static bool once = true;
-    if( once )
-    {
-        once = false;
-        ImGui::SetKeyboardFocusHere();
-    }
     ImGui::End();
+    ImGui::PopStyleColor();
 }
 
 void Wyrwyk::Exit( int returnCode )
@@ -184,10 +194,6 @@ void Wyrwyk::Update()
     {
         m_renderer->SetUniform1fv( "u_Params", m_params, WYRWYK_PARAMS_COUNT );
     }
-    if( m_isRecording )
-    {
-        MakeScreenshot( "recording" );
-    }
     if( glfwWindowShouldClose( m_window ) )
     {
         Exit( 0 );
@@ -198,16 +204,35 @@ void Wyrwyk::Render()
 {
     m_renderer->Render();
     RenderImGui();
+    // Content of the back buffer is undefined after swapping, so the pixels are read before
+    if( m_isScreenshotRequested )
+    {
+        m_isScreenshotRequested = false;
+        MakeScreenshot();
+    }
+    if( m_isRecording )
+    {
+        MakeScreenshot( "recording" );
+    }
     glfwSwapBuffers( m_window );
 }
 
-void Wyrwyk::InitGlfw()
+bool Wyrwyk::InitGlfw()
 {
-    VERIFY( glfwInit() );
+#ifdef DEBUG
+    glfwSetErrorCallback( []( int error, const char* description ) { WARNING( "GLFW error " << error << ": " << description ); } );
+#endif
+    if( !glfwInit() )
+    {
+        ASSERT( false, "Could not initialize GLFW" );
+        return false;
+    }
 
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+    // Required on macOS to get core profile context
+    glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
 
     m_window = glfwCreateWindow(
         static_cast< int >( m_renderer->GetFramebufferWidth() ),
@@ -215,16 +240,34 @@ void Wyrwyk::InitGlfw()
         ( m_baseTitle + " - " + std::string( m_expression ) ).c_str(),
         nullptr,
         nullptr );
-    CHECK( m_window );
+    if( !m_window )
+    {
+        ASSERT( false, "Could not create window with OpenGL 3.3 core profile context" );
+        return false;
+    }
     glfwMakeContextCurrent( m_window );
+    glfwSwapInterval( 1 );
 
     glfwSetWindowUserPointer( m_window, static_cast< void* >( this ) );
+    return true;
 }
 
-void Wyrwyk::InitGlew()
+bool Wyrwyk::InitGlad()
 {
-    [[maybe_unused]] auto glewInitResult = glewInit();
-    CHECK( glewInitResult == GLEW_OK );
+    if( !gladLoadGL( glfwGetProcAddress ) )
+    {
+        ASSERT( false, "Could not load OpenGL functions" );
+        return false;
+    }
+    return true;
+}
+
+void Wyrwyk::GetWindowSize( double& width, double& height ) const
+{
+    int w, h;
+    glfwGetWindowSize( m_window, &w, &h );
+    width = std::max( w, 1 );
+    height = std::max( h, 1 );
 }
 
 void Wyrwyk::RegisterGlfwCallbacks()
@@ -236,25 +279,32 @@ void Wyrwyk::RegisterGlfwCallbacks()
     m_boundingBox[ 2 ] = m_boundingBox[ 3 ] / m_renderer->GetFramebufferHeight() * m_renderer->GetFramebufferWidth();
     m_renderer->SetUniform4fv( "u_BoundingBox", m_boundingBox, 1 );
     glfwSetFramebufferSizeCallback( m_window, []( GLFWwindow* window, int w, int h ) {
+        if( w <= 0 || h <= 0 )
+        {
+            // Minimized window
+            return;
+        }
         auto wyrwyk = static_cast< Wyrwyk* >( glfwGetWindowUserPointer( window ) );
         wyrwyk->m_renderer->SetFramebufferSize( static_cast< float >( w ), static_cast< float >( h ) );
         wyrwyk->m_renderer->SetUniform2fv( "u_Resolution", wyrwyk->m_renderer->GetFramebufferSize(), 1 );
         wyrwyk->m_boundingBox[ 2 ] = wyrwyk->m_boundingBox[ 3 ] / wyrwyk->m_renderer->GetFramebufferHeight() * wyrwyk->m_renderer->GetFramebufferWidth();
         wyrwyk->m_renderer->SetUniform4fv( "u_BoundingBox", wyrwyk->m_boundingBox, 1 );
-        glViewport( 0, 0, w, h );
     } );
 
     glfwSetScrollCallback( m_window, []( GLFWwindow* window, double xoffset, double yoffset ) {
         auto wyrwyk = static_cast< Wyrwyk* >( glfwGetWindowUserPointer( window ) );
         double cursorPos[ 2 ];
+        double windowSize[ 2 ];
         glfwGetCursorPos( window, cursorPos, cursorPos + 1 );
-        cursorPos[ 0 ] /= wyrwyk->m_renderer->GetFramebufferWidth();
-        cursorPos[ 1 ] /= wyrwyk->m_renderer->GetFramebufferHeight();
+        wyrwyk->GetWindowSize( windowSize[ 0 ], windowSize[ 1 ] );
+        cursorPos[ 0 ] /= windowSize[ 0 ];
+        cursorPos[ 1 ] /= windowSize[ 1 ];
         cursorPos[ 1 ] = 1.0 - cursorPos[ 1 ];
         float underCursor[ 2 ] = { static_cast< float >( cursorPos[ 0 ] ) * wyrwyk->m_boundingBox[ 2 ] + wyrwyk->m_boundingBox[ 0 ],
                                    static_cast< float >( cursorPos[ 1 ] ) * wyrwyk->m_boundingBox[ 3 ] + wyrwyk->m_boundingBox[ 1 ] };
-        wyrwyk->m_boundingBox[ 2 ] *= std::pow( 1.1f, -yoffset );
-        wyrwyk->m_boundingBox[ 3 ] *= std::pow( 1.1f, -yoffset );
+        const auto zoom = std::pow( 1.1f, static_cast< float >( -yoffset ) );
+        wyrwyk->m_boundingBox[ 2 ] *= zoom;
+        wyrwyk->m_boundingBox[ 3 ] *= zoom;
         wyrwyk->m_boundingBox[ 0 ] = underCursor[ 0 ] - wyrwyk->m_boundingBox[ 2 ] * static_cast< float >( cursorPos[ 0 ] );
         wyrwyk->m_boundingBox[ 1 ] = underCursor[ 1 ] - wyrwyk->m_boundingBox[ 3 ] * static_cast< float >( cursorPos[ 1 ] );
         wyrwyk->m_renderer->SetUniform4fv( "u_BoundingBox", wyrwyk->m_boundingBox, 1 );
@@ -277,10 +327,10 @@ void Wyrwyk::RegisterGlfwCallbacks()
         auto wyrwyk = static_cast< Wyrwyk* >( glfwGetWindowUserPointer( window ) );
         if( wyrwyk->m_rmbState == GLFW_PRESS )
         {
-            wyrwyk->m_boundingBox[ 0 ] -=
-                static_cast< float >( xpos - wyrwyk->m_startMove[ 0 ] ) / wyrwyk->m_renderer->GetFramebufferWidth() * wyrwyk->m_boundingBox[ 2 ];
-            wyrwyk->m_boundingBox[ 1 ] +=
-                static_cast< float >( ypos - wyrwyk->m_startMove[ 1 ] ) / wyrwyk->m_renderer->GetFramebufferHeight() * wyrwyk->m_boundingBox[ 3 ];
+            double windowSize[ 2 ];
+            wyrwyk->GetWindowSize( windowSize[ 0 ], windowSize[ 1 ] );
+            wyrwyk->m_boundingBox[ 0 ] -= static_cast< float >( ( xpos - wyrwyk->m_startMove[ 0 ] ) / windowSize[ 0 ] ) * wyrwyk->m_boundingBox[ 2 ];
+            wyrwyk->m_boundingBox[ 1 ] += static_cast< float >( ( ypos - wyrwyk->m_startMove[ 1 ] ) / windowSize[ 1 ] ) * wyrwyk->m_boundingBox[ 3 ];
             wyrwyk->m_renderer->SetUniform4fv( "u_BoundingBox", wyrwyk->m_boundingBox, 1 );
 
             wyrwyk->m_startMove[ 0 ] = xpos;
@@ -299,6 +349,19 @@ void Wyrwyk::RegisterGlfwCallbacks()
 
 void Wyrwyk::Terminate()
 {
+    if( ImGui::GetCurrentContext() )
+    {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+    }
+    // OpenGL objects have to be released while the context still exists
+    m_renderer.reset();
+    if( m_window )
+    {
+        glfwDestroyWindow( m_window );
+        m_window = nullptr;
+    }
     glfwTerminate();
 }
 
@@ -313,11 +376,10 @@ void Wyrwyk::MakeScreenshot( const std::string& prefix ) const
     auto w = static_cast< int >( m_renderer->GetFramebufferWidth() );
     auto h = static_cast< int >( m_renderer->GetFramebufferHeight() );
     const auto comp = 4;
-    auto size = w * h * comp;
-    auto data = malloc( size );
-    if( data )
+    std::vector< unsigned char > data( static_cast< size_t >( w ) * h * comp );
     {
-        glReadPixels( 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data );
+        glPixelStorei( GL_PACK_ALIGNMENT, 1 );
+        glReadPixels( 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data.data() );
         stbi_flip_vertically_on_write( true );
 
         std::string file;
@@ -328,12 +390,10 @@ void Wyrwyk::MakeScreenshot( const std::string& prefix ) const
             file = out.str();
         }
 
-        VERIFY( stbi_write_png( file.c_str(), w, h, comp, data, w * comp ) );
-        free( data );
-    }
-    else
-    {
-        ASSERT( false, "Not enough memory available to make screenshot" );
+        if( !stbi_write_png( file.c_str(), w, h, comp, data.data(), w * comp ) )
+        {
+            WARNING( "Could not save screenshot: " << file.c_str() );
+        }
     }
 }
 

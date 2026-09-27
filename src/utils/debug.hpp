@@ -3,6 +3,7 @@
 #ifdef DEBUG
 
 #    include <chrono>
+#    include <cstdint>
 #    include <iomanip>
 #    include <iostream>
 #    include <sstream>

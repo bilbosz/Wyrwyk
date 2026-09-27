@@ -84,13 +84,9 @@ bool Translator::Translate( const Tokens& tokens, Tokens& outNotation ) const
         else if( it->type == SymbolType::RightParenthesis )
         {
             bool noArgs = false;
-            if( it - 1 >= begin )
+            if( it != begin && ( it - 1 )->type == SymbolType::LeftParenthesis )
             {
-                const auto& prev = it - 1;
-                if( prev->type == SymbolType::LeftParenthesis )
-                {
-                    noArgs = true;
-                }
+                noArgs = true;
             }
             UnwindStack( outNotation, stack, nullptr );
             if( stack.empty() )

@@ -1,4 +1,5 @@
 #include "utils/debug.hpp"
+#include <cstdlib>
 
 #ifdef DEBUG
 
@@ -9,17 +10,14 @@ std::chrono::high_resolution_clock::duration Debug::s_pauseDuration;
 void Debug::Breakpoint()
 {
     std::chrono::high_resolution_clock::time_point pauseStart = std::chrono::high_resolution_clock::now();
-#    if defined _WIN32
+#    if defined _MSC_VER
     __debugbreak();
-#    elif defined __linux__
+#    elif defined __GNUC__
     __builtin_trap();
 #    else
-    ::abort();
+    std::abort();
 #    endif
-#    pragma clang diagnostic push
-#    pragma ide diagnostic ignored "UnreachableCode"
     s_pauseDuration += std::chrono::high_resolution_clock::now() - pauseStart;
-#    pragma clang diagnostic pop
 }
 
 void Debug::Message( const std::wstring& type, const std::string& file, uint32_t line, const std::wstring& message, bool abort )
