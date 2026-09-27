@@ -2,6 +2,7 @@
 #include "utils/debug.hpp"
 #include <algorithm>
 #include <fstream>
+#include <iostream>
 
 SymbolDefs::SymbolDefs( const std::string& file )
 {
@@ -17,7 +18,11 @@ const SymbolDef* SymbolDefs::Find( const std::string& name )
 void SymbolDefs::Load( const std::string& file )
 {
     std::ifstream ifs( file );
-    CHECK( ifs.is_open() );
+    if( !ifs.is_open() )
+    {
+        std::cerr << "Could not open file: " << file << std::endl;
+        return;
+    }
 
     SkipFirstLine( ifs );
     while( ifs )
@@ -74,7 +79,7 @@ bool SymbolDefs::UpdateTokenDefOperation( Token& token ) const
             continue;
         }
         auto len = token.end - token.begin;
-        if( def.name.length() > len )
+        if( def.name.length() > static_cast< size_t >( len ) )
         {
             continue;
         }

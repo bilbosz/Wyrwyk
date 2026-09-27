@@ -1,8 +1,34 @@
 #include "parser/tokenizer.hpp"
 #include "parser/symbol-defs.hpp"
 #include "utils/debug.hpp"
+#include <cctype>
+#include <cstdlib>
 #include <cstring>
 #include <map>
+
+namespace
+{
+// <cctype> functions have undefined behavior for negative values, which plain char has for non-ASCII input
+bool IsSpace( char c )
+{
+    return std::isspace( static_cast< unsigned char >( c ) );
+}
+
+bool IsAlpha( char c )
+{
+    return std::isalpha( static_cast< unsigned char >( c ) );
+}
+
+bool IsAlnum( char c )
+{
+    return std::isalnum( static_cast< unsigned char >( c ) );
+}
+
+bool IsDigit( char c )
+{
+    return std::isdigit( static_cast< unsigned char >( c ) );
+}
+} // namespace
 
 Tokenizer::Tokenizer( SymbolDefs& symbolDefs ) : m_symbolDefs( symbolDefs )
 {
@@ -22,16 +48,16 @@ bool Tokenizer::Tokenize( const char* expression, Tokens& tokens ) const
     while( it != end )
     {
         Token token;
-        if( std::isspace( *it ) )
+        if( IsSpace( *it ) )
         {
             ++it;
             continue;
         }
-        else if( std::isalpha( *it ) || *it == '_' )
+        else if( IsAlpha( *it ) || *it == '_' )
         {
             token.begin = it;
             ++it;
-            while( it != end && ( std::isalnum( *it ) || *it == '_' ) )
+            while( it != end && ( IsAlnum( *it ) || *it == '_' ) )
             {
                 ++it;
             }
@@ -44,7 +70,7 @@ bool Tokenizer::Tokenize( const char* expression, Tokens& tokens ) const
             }
             token.type = token.def->type;
         }
-        else if( std::isdigit( *it ) || *it == '.' )
+        else if( IsDigit( *it ) || *it == '.' )
         {
             token.begin = it;
             // Safe because buffer is originally char[], not from c_str()

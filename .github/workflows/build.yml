@@ -1,0 +1,56 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux (system GLFW)
+            os: ubuntu-latest
+            cmake-args: ""
+          - name: Linux (GLFW from source)
+            os: ubuntu-latest
+            cmake-args: -DWYRWYK_USE_SYSTEM_GLFW=OFF
+          - name: Windows (MSVC)
+            os: windows-latest
+            cmake-args: ""
+          - name: macOS
+            os: macos-latest
+            cmake-args: ""
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build xvfb libgl1-mesa-dri \
+            libglfw3-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev \
+            libwayland-dev libxkbcommon-dev wayland-protocols
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release ${{ matrix.cmake-args }}
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Smoke test (Linux)
+        if: runner.os == 'Linux'
+        # The application runs until closed, so being still alive after the timeout (exit code 124) means success.
+        # Started from a different directory to check that resources are found next to the executable.
+        working-directory: ${{ runner.temp }}
+        run: |
+          set +e
+          timeout 10 xvfb-run -a -s "-screen 0 1024x1024x24" "$GITHUB_WORKSPACE/build/wyrwyk"
+          code=$?
+          echo "Exit code: $code"
+          test $code -eq 124

@@ -2,6 +2,7 @@
 #include "parser/symbol-defs.hpp"
 #include "utils/debug.hpp"
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 Validator::Validator( const std::string& file ) : m_validPredecessor()
@@ -11,20 +12,17 @@ Validator::Validator( const std::string& file ) : m_validPredecessor()
 
 bool Validator::Validate( const Tokens& tokens ) const
 {
-    auto begin = tokens.cbegin();
-    auto it = tokens.cbegin();
-    auto end = tokens.cend();
-
-    if( it == end )
+    if( tokens.empty() )
     {
         // Expression is empty
         return false;
     }
 
+    // One extra iteration past the last token checks what can end the expression
     auto prevType = SymbolType::Undefined;
-    while( it != end + 1 )
+    for( size_t i = 0; i <= tokens.size(); ++i )
     {
-        auto type = it != end ? it->type : SymbolType::Undefined;
+        auto type = i < tokens.size() ? tokens[ i ].type : SymbolType::Undefined;
 
         if( !IsValidPredecessor( prevType, type ) )
         {
@@ -33,16 +31,14 @@ bool Validator::Validate( const Tokens& tokens ) const
 
         if( type == SymbolType::RightParenthesis && prevType == SymbolType::LeftParenthesis )
         {
-            auto prev2 = it - 2;
-            if( prev2 < begin || prev2->type != SymbolType::Function )
+            if( i < 2 || tokens[ i - 2 ].type != SymbolType::Function )
             {
                 // Token before left parenthesis is not a function
                 return false;
             }
         }
 
-        prevType = it->type;
-        ++it;
+        prevType = type;
     }
 
     return true;
@@ -51,7 +47,11 @@ bool Validator::Validate( const Tokens& tokens ) const
 void Validator::LoadPredecessorTable( const std::string& file )
 {
     std::ifstream ifs( file );
-    CHECK( ifs.is_open() );
+    if( !ifs.is_open() )
+    {
+        std::cerr << "Could not open file: " << file << std::endl;
+        return;
+    }
 
     std::string skip;
     std::getline( ifs, skip );
@@ -69,7 +69,7 @@ void Validator::LoadPredecessorTable( const std::string& file )
         std::istringstream oss( line );
         CHECK( oss );
         oss >> skip;
-        for( int i = 0; i < SYMBOL_TYPE_COUNT; ++i )
+        for( size_t i = 0; i < SYMBOL_TYPE_COUNT; ++i )
         {
             CHECK( oss );
             oss >> m_validPredecessor[ j * SYMBOL_TYPE_COUNT + i ];
@@ -81,5 +81,5 @@ void Validator::LoadPredecessorTable( const std::string& file )
 
 bool Validator::IsValidPredecessor( SymbolType previous, SymbolType current ) const
 {
-    return m_validPredecessor[ static_cast< ptrdiff_t >( current ) * SYMBOL_TYPE_COUNT + static_cast< ptrdiff_t >( previous ) ];
+    return m_validPredecessor[ static_cast< size_t >( current ) * SYMBOL_TYPE_COUNT + static_cast< size_t >( previous ) ];
 }

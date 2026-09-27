@@ -1,8 +1,8 @@
 #ifndef WYRWYK_VALIDATOR_HPP
 #define WYRWYK_VALIDATOR_HPP
 
-#include "symbol-def.hpp"
-#include <map>
+#include "parser/symbol-def.hpp"
+#include <string>
 #include <vector>
 
 class SymbolDefs;
@@ -19,7 +19,7 @@ private:
     void LoadPredecessorTable( const std::string& file );
     [[nodiscard]] bool IsValidPredecessor( SymbolType previous, SymbolType current ) const;
 
-    bool m_validPredecessor[ SYMBOL_TYPE_COUNT * SYMBOL_TYPE_COUNT ];
+    bool m_validPredecessor[ SYMBOL_TYPE_COUNT * SYMBOL_TYPE_COUNT ]{};
 };
 
 #endif // WYRWYK_VALIDATOR_HPP

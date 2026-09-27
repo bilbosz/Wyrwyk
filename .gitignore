@@ -1,1 +1,6 @@
 /imgui.ini
+/build*/
+/cmake-build-*/
+/.vs/
+/.idea/
+/out/

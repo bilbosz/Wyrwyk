@@ -3,11 +3,12 @@
 #include "parser/translator.hpp"
 #include "parser/validator.hpp"
 #include "utils/debug.hpp"
+#include "utils/resources.hpp"
 
 Parser::Parser()
-    : m_symbolDefs( std::make_unique< SymbolDefs >( "res/parser/symbol-defs.tsv" ) )
+    : m_symbolDefs( std::make_unique< SymbolDefs >( ResourcePath( "parser/symbol-defs.tsv" ) ) )
     , m_tokenizer( std::make_unique< Tokenizer >( *m_symbolDefs.get() ) ) // NOLINT(readability-redundant-smartptr-get)
-    , m_validator( std::make_unique< Validator >( "res/parser/valid-predecessors.tsv" ) )
+    , m_validator( std::make_unique< Validator >( ResourcePath( "parser/valid-predecessors.tsv" ) ) )
     , m_translator( std::make_unique< Translator >( *m_symbolDefs ) ) // NOLINT(readability-redundant-smartptr-get)
 {
 }

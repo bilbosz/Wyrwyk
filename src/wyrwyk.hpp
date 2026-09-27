@@ -8,10 +8,11 @@
 #include <cmath>
 #include <map>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
-class GLFWwindow;
+struct GLFWwindow;
 
 class Parser;
 class Renderer;
@@ -44,6 +45,7 @@ private:
     bool m_isMultisampling = false;
     std::unique_ptr< Renderer > m_renderer;
     bool m_isRecording = false;
+    bool m_isScreenshotRequested = false;
 
     void InitImGui();
     void UpdateImGui();
@@ -51,10 +53,11 @@ private:
     void Exit( int returnCode );
     void Update();
     void Render();
-    void InitGlfw();
-    void InitGlew();
+    [[nodiscard]] bool InitGlfw();
+    [[nodiscard]] bool InitGlad();
     void RegisterGlfwCallbacks();
     void Terminate();
+    void GetWindowSize( double& width, double& height ) const;
     void MakeScreenshot( const std::string& prefix = "screenshot_" ) const;
     void StartRecording();
     void StopRecording();

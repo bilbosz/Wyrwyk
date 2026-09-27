@@ -27,33 +27,87 @@ We are only interested when z = 0, so it is a plane at height 0 and its intersec
 
 ## Requirements
 
-### [CMake](https://cmake.org/) >= 3.11
+* C++17 compiler - GCC 9+, Clang 10+, MSVC 2019+ or Apple Clang (Xcode 12+)
+* [CMake](https://cmake.org/) >= 3.16
+* [Git](https://git-scm.com/) - used by CMake to download dependencies
+* Graphics driver supporting OpenGL 3.3 core profile
 
-### [GLEW](http://glew.sourceforge.net/) - The OpenGL Extension Wrangler Library
+Libraries are downloaded and built automatically during CMake configuration, nothing has to be installed manually:
+
+* [GLFW](https://www.glfw.org/) - window, OpenGL context and input (system installation is used when available, otherwise 3.5.1 is downloaded)
+* [Dear ImGui](https://github.com/ocornut/imgui) 1.92.9b - GUI
+
+Bundled in `contrib`:
+
+* [glad](https://github.com/Dav1dde/glad) - OpenGL 3.3 core loader
+* [stb_image_write](https://github.com/nothings/stb) - saving screenshots
+
+### Linux
+
+Debian / Ubuntu:
 
 ```shell
-sudo apt-get install libglew-dev
+sudo apt-get install build-essential cmake git libglfw3-dev
 ```
 
-Documentation: http://glew.sourceforge.net/basic.html
-
-### [GLFW](https://www.glfw.org/) - Graphics Library Framework
+Fedora:
 
 ```shell
-sudo apt-get install libglfw3-dev
+sudo dnf install gcc-c++ cmake git glfw-devel
 ```
 
-Documentation: https://www.glfw.org/documentation.html
+Arch Linux:
+
+```shell
+sudo pacman -S base-devel cmake git glfw
+```
+
+Without system GLFW it is built from source, which additionally requires X11 and Wayland development packages, e.g. on Debian / Ubuntu:
+
+```shell
+sudo apt-get install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libwayland-dev libxkbcommon-dev wayland-protocols
+```
+
+### Windows
+
+Install [Visual Studio](https://visualstudio.microsoft.com/) with the "Desktop development with C++" workload, it contains CMake. Git has to be installed separately.
+
+### macOS
+
+```shell
+xcode-select --install
+brew install cmake
+```
 
 ## Building and running executable
+
+The same commands work on every platform:
+
 ```shell
-git submodule update --init --recursive
-mkdir build
-cd build
-cmake -G "Unix Makefiles" ..
-make
-./wyrwyk
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
 ```
+
+The executable is placed in `build` (or `build/Release` for Visual Studio and Xcode generators) together with the `res` directory it needs:
+
+```shell
+./build/wyrwyk               # Linux, macOS
+build\Release\wyrwyk.exe     # Windows
+```
+
+The executable can be started from any directory. Copy it together with the `res` directory to move it elsewhere, or use `cmake --install build --prefix <directory>`.
+
+### Controls
+
+* Mouse scroll - zoom
+* Right mouse button drag - move
+* Esc - exit
+
+### Troubleshooting
+
+* Errors are printed to the console, so run the executable from a terminal to see them.
+* `Could not create window with OpenGL 3.3 core profile context` - update graphics drivers. In a virtual machine enable 3D acceleration.
+* To force the use of GLFW downloaded and built from source add `-DWYRWYK_USE_SYSTEM_GLFW=OFF` to the first CMake command.
 
 ## Gallery
 

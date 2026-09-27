@@ -8,10 +8,11 @@ uniform vec2 u_Resolution;
 uniform vec4 u_BoundingBox;
 
 const int u_ParamsCount = 5;
-uniform float u_Params[u_ParamsCount] = { 1, 2, 3, 4, 5 };
+uniform float u_Params[u_ParamsCount];
 
 const int Size = 1000;
-uniform vec2[Size] u_Symbols;
+// Two (type, value) symbols packed in each vec4 to halve the number of used uniform slots
+uniform vec4 u_Symbols[Size / 2];
 
 uniform vec3 u_FalseColor;
 uniform vec3 u_TrueColor;
@@ -76,28 +77,35 @@ vec4 notOperator( vec4 a )
     return vec4(!bvec4(notZero(a)).x);
 }
 
+vec2 symbol(int i)
+{
+    vec4 pair = u_Symbols[i / 2];
+    return (i % 2 == 0) ? pair.xy : pair.zw;
+}
+
 float eval(vec4 v)
 {
     vec4[Size] args;
     int n = 0;
     int i = 0;
-    while (u_Symbols[i].x != 0.0)
+    vec2 s = symbol(0);
+    while (s.x != 0.0)
     {
-        int type = int(u_Symbols[i].x);
+        int type = int(s.x);
         if (type == 1)
         {
-            args[n] = vec4(u_Symbols[i].y);
+            args[n] = vec4(s.y);
             ++n;
         }
         else if (type == 2)
         {
-            int paramId = int(u_Symbols[i].y);
+            int paramId = int(s.y);
             args[n] = vec4(u_Params[paramId]);
             ++n;
         }
         else if (type == 3)
         {
-            int variable = int(u_Symbols[i].y);
+            int variable = int(s.y);
             if (variable == 0)
             {
                 args[n] = vec4(v.x, v.x, v.z, v.z);
@@ -111,7 +119,7 @@ float eval(vec4 v)
         }
         else if (type == 4 || type == 5)
         {
-            int command = int(u_Symbols[i].y);
+            int command = int(s.y);
             switch (command)
             {
                 case 0: args[n - 2]=args[n - 2] * args[n - 1]; --n; break;
@@ -185,6 +193,7 @@ float eval(vec4 v)
             }
         }
         ++i;
+        s = symbol(i);
     }
     return notZero(args[0]).x;
 }

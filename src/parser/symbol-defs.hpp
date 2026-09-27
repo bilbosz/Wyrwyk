@@ -2,7 +2,8 @@
 #define WYRWYK_SYMBOL_DEFS_HPP
 
 #include "parser/symbol-def.hpp"
-#include "tokenizer.hpp"
+#include "parser/tokenizer.hpp"
+#include <iosfwd>
 #include <string>
 #include <vector>
 
